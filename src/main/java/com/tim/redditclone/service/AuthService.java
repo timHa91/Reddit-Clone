@@ -1,5 +1,7 @@
 package com.tim.redditclone.service;
 
+import com.tim.redditclone.dto.AuthenticationResponse;
+import com.tim.redditclone.dto.LoginRequest;
 import com.tim.redditclone.dto.RegisterRequest;
 import com.tim.redditclone.exceptions.SpringRedditException;
 import com.tim.redditclone.model.NotificationEmail;
@@ -7,8 +9,13 @@ import com.tim.redditclone.model.User;
 import com.tim.redditclone.model.VerificationToken;
 import com.tim.redditclone.repository.UserRepository;
 import com.tim.redditclone.repository.VerificationTokenRepository;
+import com.tim.redditclone.security.JwtProvider;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,23 +24,17 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor
 public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final VerificationTokenRepository verificationTokenRepository;
     private final MailService mailService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtProvider jwtProvider;
 
-    @Autowired
-    public AuthService(PasswordEncoder passwordEncoder, UserRepository userRepository,
-                       VerificationTokenRepository verificationTokenRepository, MailService mailService) {
-        this.passwordEncoder = passwordEncoder;
-        this.userRepository = userRepository;
-        this.verificationTokenRepository = verificationTokenRepository;
-        this.mailService = mailService;
-    }
-
-    // Transactional ist besonders nützlich, wenn mehrere Datenbankoperationen ausführen müssen und um sicherstellen, dass alle erfolgreich oder gar nicht abgeschlossen werden.
+    // Transactional, wenn mehrere Datenbankoperationen ausführt werden müssen, um sicherstellen, dass alle erfolgreich oder gar nicht abgeschlossen werden.
     @Transactional
     public void signUp(RegisterRequest registerRequest) {
         User newUser = new User();
@@ -75,5 +76,13 @@ public class AuthService {
         user.setEnabled(true);
         // Save updated User
         userRepository.save(user);
+    }
+
+    public AuthenticationResponse login(LoginRequest loginRequest) {
+        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
+                loginRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+        String token = jwtProvider.generateToken(authenticate);
+        return new AuthenticationResponse(token, loginRequest.getUsername());
     }
 }
