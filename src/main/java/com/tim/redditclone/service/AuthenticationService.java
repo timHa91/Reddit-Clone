@@ -57,6 +57,7 @@ public class AuthenticationService {
         ));
     }
 
+    @Transactional
     public void verification(String verificationToken) {
         Optional<VerificationToken> token = verificationTokenRepository.findByToken(verificationToken);
         // Check if Valid
@@ -93,6 +94,7 @@ public class AuthenticationService {
         return tokenValue;
     }
 
+    @Transactional
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         String email = request.getEmail();
         User user = userRepository.findByEmail(email)

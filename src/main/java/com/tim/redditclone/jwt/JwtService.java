@@ -17,7 +17,7 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-
+    // Utility-Klasse für die Erstellung, Validierung und Extraktion von JWT-Token
     @Value("${SECRET_KEY}")
     private String SECRET_KEY;
 
