@@ -1,14 +1,16 @@
 package com.tim.redditclone.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class LoginRequest {
+@AllArgsConstructor
+@Builder
+public class AuthenticationRequest {
 
-    private String username;
+    private String email;
     private String password;
 }
