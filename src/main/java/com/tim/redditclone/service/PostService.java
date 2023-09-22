@@ -12,7 +12,6 @@ import com.tim.redditclone.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Hibernate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -33,12 +32,14 @@ public class PostService {
     @Transactional
     public PostResponse save(PostRequest postRequest) {
         Post save = postRepository.save(mapPostRequest(postRequest));
+
         return mapToPostResponse(save);
     }
 
     @Transactional
     public List<PostResponse> getAll() {
         List <Post> posts = postRepository.findAll();
+
         return posts.stream()
                 .map(this::mapToPostResponse)
                 .toList();
@@ -67,6 +68,7 @@ public class PostService {
         Subreddit subreddit = subredditRepository.findById(id)
                 .orElseThrow(() -> new SpringRedditException("Subreddit not found"));
         List<Post> posts = postRepository.findAllBySubreddit(subreddit);
+
         return posts.stream()
                 .map(this::mapToPostResponse)
                 .toList();

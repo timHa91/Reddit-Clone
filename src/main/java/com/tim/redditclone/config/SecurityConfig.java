@@ -26,11 +26,13 @@ public class SecurityConfig {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**")
+                        .requestMatchers("/api/auth/**")
                         .permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/v1/subreddit/**")
+                        .requestMatchers(HttpMethod.GET,"/api/subreddit/**")
                         .permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/v1/post/**")
+                        .requestMatchers(HttpMethod.GET,"/api/post/**")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/comments")
                         .permitAll()
                         .anyRequest()
                         .authenticated())

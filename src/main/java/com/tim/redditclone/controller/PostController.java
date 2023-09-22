@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @Slf4j
-@RequestMapping("/api/v1/post")
+@RequestMapping("/api/post")
 public class PostController {
 
     private final PostService postService;
@@ -30,19 +30,19 @@ public class PostController {
                 .body(postService.getAll());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<PostResponse> getPost(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(postService.getPost(id));
     }
 
-    @GetMapping("/by-subreddit/{id}")
+    @GetMapping("by-subreddit/{id}")
     public ResponseEntity<List<PostResponse>> getAllPostsBySubreddit(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(postService.getPostsBySubreddit(id));
     }
 
-    @GetMapping("/by-user/{username}")
+    @GetMapping("by-user/{username}")
     public ResponseEntity<List<PostResponse>> getAllPostsByUser(@PathVariable String username) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(postService.getPostsByUser(username));
