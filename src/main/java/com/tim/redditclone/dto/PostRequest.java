@@ -5,12 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
+@Builder
+public class PostRequest {
 
-    private String token;
-    private String username;
+    private String postName;
+    private String subredditName;
+    private String description;
+    private String url;
 }

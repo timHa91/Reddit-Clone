@@ -35,6 +35,7 @@ public class Post {
     private Instant createdDate;
     // FetchType.LAZY bedeutet, dass die Daten erst dann aus der Datenbank abgerufen werden, wenn sie tatsächlich benötigt werden
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id", referencedColumnName = "id")
+    @JoinColumn(name = "subreddit_id", referencedColumnName = "id")
     private Subreddit subreddit;
+
 }

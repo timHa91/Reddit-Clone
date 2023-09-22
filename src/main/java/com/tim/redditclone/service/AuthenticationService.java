@@ -11,24 +11,27 @@ import com.tim.redditclone.model.UserRole;
 import com.tim.redditclone.model.VerificationToken;
 import com.tim.redditclone.repository.UserRepository;
 import com.tim.redditclone.repository.VerificationTokenRepository;
+import org.springframework.security.oauth2.jwt.Jwt;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.naming.AuthenticationException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
+@Slf4j
 public class AuthenticationService {
 
     private final UserRepository userRepository;
@@ -42,6 +45,7 @@ public class AuthenticationService {
     @Transactional
     public void register(RegisterRequest request) {
         var user = User.builder()
+                .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(UserRole.USER)
@@ -73,8 +77,8 @@ public class AuthenticationService {
 
     @Transactional
     private void fetchUserAndEnable(VerificationToken verificationToken) {
-        String email = verificationToken.getUser().getUsername();
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new SpringRedditException("User not found with name - " + email));
+        String username = verificationToken.getUser().getUsername();
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new SpringRedditException("User not found with name - " + username));
         user.setEnabled(true);
         // Save updated User
         userRepository.save(user);
@@ -95,10 +99,18 @@ public class AuthenticationService {
     }
 
     @Transactional
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
+        return userRepository.findByUsername(currentPrincipalName)
+                .orElseThrow(() -> new UsernameNotFoundException("User name not found - " + currentPrincipalName));
+    }
+
+    @Transactional
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        String email = request.getEmail();
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new SpringRedditException("User not found for email: " + email));
+        String username = request.getUsername();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new SpringRedditException("User not found for email: " + username));
         if (!user.isEnabled()) {
             throw new SpringRedditException("User is not enabled");
         }
@@ -106,7 +118,7 @@ public class AuthenticationService {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            email,
+                            username,
                             request.getPassword()
                     )
             );
@@ -114,6 +126,7 @@ public class AuthenticationService {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String authToken = jwtService.generateToken(user);
             return AuthenticationResponse.builder()
+                    .username(username)
                     .token(authToken)
                     .build();
         } catch (org.springframework.security.core.AuthenticationException ex) {

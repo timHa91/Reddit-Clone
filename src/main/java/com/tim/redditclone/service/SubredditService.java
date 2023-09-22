@@ -1,13 +1,16 @@
 package com.tim.redditclone.service;
 
 import com.tim.redditclone.dto.SubredditDto;
+import com.tim.redditclone.exceptions.SpringRedditException;
 import com.tim.redditclone.model.Subreddit;
+import com.tim.redditclone.model.User;
 import com.tim.redditclone.repository.SubredditRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -16,6 +19,7 @@ import java.util.List;
 public class SubredditService {
 
     private final SubredditRepository subredditRepository;
+    private final AuthenticationService authenticationService;
 
     @Transactional
     public SubredditDto save(SubredditDto subredditDto) {
@@ -31,6 +35,13 @@ public class SubredditService {
                 .toList();
     }
 
+    @Transactional
+    public SubredditDto getSubreddit(Long id) {
+        Subreddit subreddit = subredditRepository.findById(id)
+                .orElseThrow(() -> new SpringRedditException("Subreddit does not exit"));
+        return mapToDto(subreddit);
+    }
+
     private SubredditDto mapToDto(Subreddit subreddit) {
         return SubredditDto.builder()
                 .name(subreddit.getName())
@@ -40,8 +51,12 @@ public class SubredditService {
     }
 
     private Subreddit mapSubredditDto(SubredditDto subredditDto) {
-        return Subreddit.builder().name(subredditDto.getName())
+        User user = authenticationService.getCurrentUser();
+        return Subreddit.builder()
+                .name(subredditDto.getName())
                 .description(subredditDto.getDescription())
+                .createdDate(Instant.now())
+                .user(user)
                 .build();
     }
 }
