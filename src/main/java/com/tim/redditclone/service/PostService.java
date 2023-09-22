@@ -1,11 +1,13 @@
 package com.tim.redditclone.service;
 
+import com.github.marlonlom.utilities.timeago.TimeAgo;
 import com.tim.redditclone.dto.PostRequest;
 import com.tim.redditclone.dto.PostResponse;
 import com.tim.redditclone.exceptions.SpringRedditException;
 import com.tim.redditclone.model.Post;
 import com.tim.redditclone.model.Subreddit;
 import com.tim.redditclone.model.User;
+import com.tim.redditclone.repository.CommentRepository;
 import com.tim.redditclone.repository.PostRepository;
 import com.tim.redditclone.repository.SubredditRepository;
 import com.tim.redditclone.repository.UserRepository;
@@ -19,15 +21,16 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
-@Service
-@AllArgsConstructor
-@Slf4j
+    @Service
+    @AllArgsConstructor
+    @Slf4j
 public class PostService {
 
     private final PostRepository postRepository;
     private final SubredditRepository subredditRepository;
     private final AuthenticationService authenticationService;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public PostResponse save(PostRequest postRequest) {
@@ -91,6 +94,8 @@ public class PostService {
 
 
     private PostResponse mapToPostResponse(Post post) {
+        Integer commentCountValue = commentRepository.findAllCommentsByPost(post).size();
+        String durationValue = TimeAgo.using(post.getCreatedDate().toEpochMilli());
         return PostResponse.builder()
                 .postId(post.getPostId())
                 .description(post.getDescription())
@@ -98,6 +103,9 @@ public class PostService {
                 .userName(post.getUser().getUsername())
                 .postName(post.getPostName())
                 .url(post.getUrl())
+                .voteCount(post.getVoteCount())
+                .commentCount(commentCountValue)
+                .duration(durationValue)
                 .build();
     }
 }

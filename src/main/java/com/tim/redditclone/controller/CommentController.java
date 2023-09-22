@@ -27,14 +27,12 @@ public class CommentController {
     // "?postId=1
     @GetMapping("/by-post/{id}")
     public ResponseEntity<List<CommentDto>> getAllCommentsByPost(@PathVariable Long postId) {
-        System.out.println("!!!!!!!!!!!!!!!!! post id: " + postId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(commentService.getAllCommentsByPost(postId));
     }
 
     @GetMapping("/by-post/{username}")
     public ResponseEntity<List<CommentDto>> getAllCommentsByUsername(@PathVariable String username) {
-        System.out.println("USERNAME: " + username);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(commentService.getAllCommentsByUsername(username));
     }

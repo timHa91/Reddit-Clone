@@ -57,7 +57,7 @@ public class AuthenticationService {
         mailService.sendMail(new NotificationEmail(
                 "Please Activate your Account",
                         user.getEmail(), "Thank you for signing up to Reddit Clone, " +
-                        "http://localhost:8080/api/v1/auth/accountVerification/" + verificationToken
+                        "http://localhost:8080/api/auth/accountVerification/" + verificationToken
         ));
     }
 
