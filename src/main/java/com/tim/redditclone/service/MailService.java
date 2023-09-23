@@ -2,6 +2,7 @@ package com.tim.redditclone.service;
 
 import com.tim.redditclone.exceptions.SpringRedditException;
 import com.tim.redditclone.model.NotificationEmail;
+import com.tim.redditclone.utils.MailContentBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;

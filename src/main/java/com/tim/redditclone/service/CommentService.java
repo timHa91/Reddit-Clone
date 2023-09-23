@@ -9,6 +9,7 @@ import com.tim.redditclone.model.User;
 import com.tim.redditclone.repository.CommentRepository;
 import com.tim.redditclone.repository.PostRepository;
 import com.tim.redditclone.repository.UserRepository;
+import com.tim.redditclone.utils.MailContentBuilder;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

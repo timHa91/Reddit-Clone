@@ -2,16 +2,14 @@ package com.tim.redditclone.service;
 
 import com.tim.redditclone.dto.AuthenticationRequest;
 import com.tim.redditclone.dto.AuthenticationResponse;
+import com.tim.redditclone.dto.RefreshTokenRequest;
 import com.tim.redditclone.dto.RegisterRequest;
 import com.tim.redditclone.exceptions.SpringRedditException;
 import com.tim.redditclone.jwt.JwtService;
-import com.tim.redditclone.model.NotificationEmail;
-import com.tim.redditclone.model.User;
-import com.tim.redditclone.model.UserRole;
-import com.tim.redditclone.model.VerificationToken;
+import com.tim.redditclone.model.*;
+import com.tim.redditclone.repository.RefreshTokenRepository;
 import com.tim.redditclone.repository.UserRepository;
 import com.tim.redditclone.repository.VerificationTokenRepository;
-import org.springframework.security.oauth2.jwt.Jwt;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -40,7 +36,9 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final MailService mailService;
     private final VerificationTokenRepository verificationTokenRepository;
-
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final AuthenticationTokenService authenticationTokenService;
+    private final RefreshTokenService refreshTokenService;
 
     @Transactional
     public void register(RegisterRequest request) {
@@ -53,7 +51,7 @@ public class AuthenticationService {
                 .created(Instant.now())
                 .build();
         userRepository.save(user);
-        String verificationToken = generateVerificationToken(user);
+        String verificationToken = authenticationTokenService.generateVerificationToken(user);
         mailService.sendMail(new NotificationEmail(
                 "Please Activate your Account",
                         user.getEmail(), "Thank you for signing up to Reddit Clone, " +
@@ -84,20 +82,6 @@ public class AuthenticationService {
         userRepository.save(user);
     }
 
-    private String generateVerificationToken(User user) {
-        String tokenValue = UUID.randomUUID().toString();
-        VerificationToken token = new VerificationToken();
-        // Erstellen Sie den Ablaufzeitpunkt (1 Stunde ab jetzt)
-        Instant now = Instant.now();
-        Instant expiration = now.plus(1, ChronoUnit.HOURS);
-        token.setExpiryDate(expiration);
-        token.setToken(tokenValue);
-        token.setUser(user);
-
-        verificationTokenRepository.save(token);
-        return tokenValue;
-    }
-
     @Transactional
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -123,11 +107,16 @@ public class AuthenticationService {
                     )
             );
             // Authentication was successful
+
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String authToken = jwtService.generateToken(user);
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
+
+
             return AuthenticationResponse.builder()
                     .username(username)
                     .token(authToken)
+                    .refreshToken(refreshToken.getToken())
                     .build();
         } catch (org.springframework.security.core.AuthenticationException ex) {
             if (ex instanceof LockedException) {
@@ -137,4 +126,26 @@ public class AuthenticationService {
             }
         }
     }
+
+    public AuthenticationResponse refreshToken(RefreshTokenRequest request) {
+        RefreshToken refreshToken = refreshTokenRepository.findByToken(request.getRefreshToken())
+                .orElseThrow(() -> new SpringRedditException("Refresh Token not found"));
+
+        refreshTokenService.verifyExpiration(refreshToken);
+
+        User user = refreshToken.getUser();
+        String username = user.getUsername();
+
+        String authToken = jwtService.generateToken(user);
+        RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(user);
+
+        refreshTokenRepository.delete(refreshToken);
+
+        return AuthenticationResponse.builder()
+                .username(username)
+                .token(authToken)
+                .refreshToken(newRefreshToken.getToken())
+                .build();
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.tim.redditclone.jwt;
 
+import com.tim.redditclone.jwt.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

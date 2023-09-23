@@ -18,8 +18,11 @@ import java.util.function.Function;
 @Service
 public class JwtService {
     // Utility-Klasse für die Erstellung, Validierung und Extraktion von JWT-Token
-    @Value("${SECRET_KEY}")
-    private String SECRET_KEY;
+    @Value("${jwtSecret}")
+    private String jwtSecret;
+
+    @Value("${jwtExpirationMs}")
+    private int jwtExpirationMs;
 
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
@@ -34,7 +37,7 @@ public class JwtService {
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -71,7 +74,7 @@ public class JwtService {
     }
 
     private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

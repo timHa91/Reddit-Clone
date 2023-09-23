@@ -2,14 +2,16 @@
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/jwt/JwtService.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/controller/AuthenticationController.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/model/VoteType.java
+/Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/dto/RefreshTokenRequest.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/dto/AuthenticationRequest.java
-/Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/service/MailContentBuilder.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/service/AuthenticationService.java
+/Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/dto/RefreshTokenResponse.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/dto/PostRequest.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/dto/SubredditDto.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/controller/VoteController.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/repository/VerificationTokenRepository.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/model/Subreddit.java
+/Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/model/RefreshToken.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/controller/PostController.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/RedditCloneApplication.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/model/VerificationToken.java
@@ -25,8 +27,11 @@
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/exceptions/SpringRedditException.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/model/UserRole.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/service/CommentService.java
+/Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/service/AuthenticationTokenService.java
+/Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/utils/MailContentBuilder.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/dto/CommentDto.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/repository/UserRepository.java
+/Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/service/RefreshTokenService.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/repository/PostRepository.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/model/Comment.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/dto/AuthenticationResponse.java
@@ -35,6 +40,7 @@
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/config/SecurityConfig.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/model/NotificationEmail.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/dto/RegisterRequest.java
+/Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/repository/RefreshTokenRepository.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/dto/VoteDto.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/controller/SubredditController.java
 /Users/timhartmann/Desktop/RedditClone/src/main/java/com/tim/redditclone/service/PostService.java
