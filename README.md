@@ -1,2 +1,2 @@
 # RedditClone
-Reddit Clone with Spring Boot and Angular
+Reddit Clone with Spring Boot
