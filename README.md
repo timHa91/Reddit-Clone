@@ -1,6 +1,6 @@
-# RedditClone
+# Reddit-Clone
 
-RedditClone is a RESTful web application built with Spring Boot that replicates the functionality of the popular website Reddit. It allows users to create subreddits, make posts, leave comments, and vote on posts and comments. The application also features user authentication using JSON Web Tokens (JWT) and includes an email service for user activation and comment notifications.
+Reddit Clone is a RESTful web application built with Spring Boot that replicates the functionality of the popular website Reddit. It allows users to create subreddits, make posts, leave comments, and vote on posts and comments. The application also features user authentication using JSON Web Tokens (JWT) and includes an email service for user activation and comment notifications.
 
 ## Features
 
